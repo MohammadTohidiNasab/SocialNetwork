@@ -4,6 +4,7 @@ from .models import Post
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
 
 class HomeView(View):
@@ -42,3 +43,15 @@ class PostDetailView(View):
 			new_comment.save()
 			messages.success(request, 'your comment submitted successfully', 'success')
 			return redirect('home:post_detail', self.post_instance.id, self.post_instance.slug)
+
+
+
+class PostDeleteView(LoginRequiredMixin, View):
+	def get(self, request, post_id):
+		post = get_object_or_404(Post, pk=post_id)
+		if post.user.id == request.user.id:
+			post.delete()
+			messages.success(request, 'post deleted successfully', 'success')
+		else:
+			messages.error(request, 'you cant delete this post', 'danger')
+		return redirect('home:home')
