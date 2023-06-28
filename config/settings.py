@@ -129,3 +129,15 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'account.authenticate.EmailBackend',
 ]
+
+
+# Google account
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'exampel@gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_PASSWORD = 'account code '
+EMAIL_USE_TLS = True
+#for all sended emails
+DEFAULT_FROM_EMAIL = 'mohammad tohidi'
+
