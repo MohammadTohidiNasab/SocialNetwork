@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from .forms import UserRegistrationForm, UserLoginForm, EditUserForm
+from .forms import UserRegistrationForm, UserLoginForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -104,3 +104,43 @@ class UserPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class UserPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
 	template_name = 'account/password_reset_complete.html'
+
+
+class UserFollowView(LoginRequiredMixin, View):
+	def dispatch(self, request, *args, **kwargs):
+		user = User.objects.get(id=kwargs['user_id'])
+		if user.id != request.user.id:
+			return super().dispatch(request, *args, **kwargs)
+		else:
+			messages.error(request, 'you cant follow/unfollow your account', 'danger')
+			return redirect('account:user_profile', user.id)
+
+	def get(self, request, user_id):
+		user = User.objects.get(id=user_id)
+		relation = Relation.objects.filter(from_user=request.user, to_user=user)
+		if relation.exists():
+			messages.error(request, 'you are already following this user', 'danger')
+		else:
+			Relation(from_user=request.user, to_user=user).save()
+			messages.success(request, 'you followed this user', 'success')
+		return redirect('account:user_profile', user.id)
+
+
+class UserUnfollowView(LoginRequiredMixin, View):
+	def dispatch(self, request, *args, **kwargs):
+		user = User.objects.get(id=kwargs['user_id'])
+		if user.id != request.user.id:
+			return super().dispatch(request, *args, **kwargs)
+		else:
+			messages.error(request, 'you cant follow/unfollow your account', 'danger')
+			return redirect('account:user_profile', user.id)
+
+	def get(self, request, user_id):
+		user = User.objects.get(id=user_id)
+		relation = Relation.objects.filter(from_user=request.user, to_user=user)
+		if relation.exists():
+			relation.delete()
+			messages.success(request, 'you unfollowed this user', 'success')
+		else:
+			messages.error(request, 'you are not following this user', 'danger')
+		return redirect('account:user_profile', user.id)
