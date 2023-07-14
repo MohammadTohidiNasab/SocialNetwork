@@ -1,7 +1,7 @@
 from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Post
-from .forms import PostCreateUpdateForm
+from .forms import PostCreateUpdateForm, PostSearchForm, CommentCreateForm, CommentReplyForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils.decorators import method_decorator
