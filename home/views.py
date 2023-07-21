@@ -1,13 +1,13 @@
-from django.views import View
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
 from .models import Post, Comment, Vote
-from .forms import PostCreateUpdateForm, PostSearchForm, CommentCreateForm, CommentReplyForm
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib import messages
+from .forms import PostCreateUpdateForm, CommentCreateForm, CommentReplyForm, PostSearchForm
 from django.utils.text import slugify
-# Create your views here.
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 
 class HomeView(View):
 	form_class = PostSearchForm
@@ -17,7 +17,6 @@ class HomeView(View):
 		if request.GET.get('search'):
 			posts = posts.filter(body__contains=request.GET['search'])
 		return render(request, 'home/index.html', {'posts':posts, 'form':self.form_class})
-
 
 
 class PostDetailView(View):
@@ -47,7 +46,6 @@ class PostDetailView(View):
 			return redirect('home:post_detail', self.post_instance.id, self.post_instance.slug)
 
 
-
 class PostDeleteView(LoginRequiredMixin, View):
 	def get(self, request, post_id):
 		post = get_object_or_404(Post, pk=post_id)
@@ -57,8 +55,6 @@ class PostDeleteView(LoginRequiredMixin, View):
 		else:
 			messages.error(request, 'you cant delete this post', 'danger')
 		return redirect('home:home')
-
-
 
 
 class PostUpdateView(LoginRequiredMixin, View):
@@ -89,7 +85,6 @@ class PostUpdateView(LoginRequiredMixin, View):
 			new_post.save()
 			messages.success(request, 'you updated this post', 'success')
 			return redirect('home:post_detail', post.id, post.slug)
-
 
 
 class PostCreateView(LoginRequiredMixin, View):
