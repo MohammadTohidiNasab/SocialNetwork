@@ -31,7 +31,7 @@
 <br>
 
 ## :dart: About ##
-
+The social network website project built with Django has the ability to search, like, posts, add posts, login with email and custom user model
 ## :sparkles: Features ##
 
 :heavy_check_mark: serch, add, delete, update posts   \
