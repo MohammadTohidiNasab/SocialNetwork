@@ -1,6 +1,8 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from .forms import UserRegistrationForm
 from django.contrib.auth.models import User
+from .forms import UserLoginForm
+from django.urls import reverse
 # Create your tests here.
 
 
@@ -36,3 +38,45 @@ class TestRegisterationForm(TestCase):
             self.assertTrue(form.has_error)
 
 
+#test registretion view
+class TestUserRegisterView(TestCase):
+    
+    def setUp(self):
+        self.client = Client()
+        
+    def test_user_register_GET(self):
+        
+        response = self.client.get(reverse('account:user_register'))
+        self.assertEqual(response.status_code,200)
+        self.assertTemplateUsed(response,'account/register.html')
+        self.failUnless(response.context['form'], UserRegistrationForm)
+        
+        
+    def test_user_register_POST_valid(self):
+        
+        response = self.client.post(reverse('account:user_register'), data={'username': 'mohammad', 'email':'mme@gmail.com', 'password1':'mmd', 'password2':'mmd'})
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('home:home'))
+        self.assertEqual(User.objects.count(),1)
+        
+        
+    def test_user_register_POST_invalid(self):
+        
+        response = self.client.post(reverse('account:user_register'), data={'username': 'mohamad', 'email':'invalid email', 'password1':'mmd22', 'password2':'mmd22'})
+        self.assertEqual(response.status_code,200)
+        self.failIf(response.context['form'].is_valid())
+        self.assertFormError(form=response.context['form'], field='email', errors=['یک ایمیل آدرس معتبر وارد کنید.'])
+        
+
+#user log out view
+
+class UserLogOutView(TestCase):
+    
+    def setUp(self):
+        self.client = Client()
+        User.objects.create_user(username='tohidi',email='tohidi@email.com', password='tohidi123')
+        self.client.login(username='tohidi',email='tohidi@email.com', password='tohidi123')
+        
+    def test_user_loguou(self):
+        response = self.client.get(reverse('account:user_logout'))
+        self.assertEqual(response.status_code,302)
