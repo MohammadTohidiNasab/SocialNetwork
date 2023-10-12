@@ -6,5 +6,5 @@ from .models import Profile
 
 @receiver(post_save, sender=User)
 def create_profile(sender, **kwargs):
-	if kwargs['created']:
-		Profile.objects.create(user=kwargs['instance'])
+    if kwargs["created"]:
+        Profile.objects.create(user=kwargs["instance"])

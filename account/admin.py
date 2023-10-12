@@ -5,12 +5,12 @@ from django.contrib.auth.models import User
 
 
 class ProfileInline(admin.StackedInline):
-	model = Profile
-	can_delete = False
+    model = Profile
+    can_delete = False
 
 
 class ExtendedUserAdmin(UserAdmin):
-	inlines = (ProfileInline,)
+    inlines = (ProfileInline,)
 
 
 admin.site.unregister(User)
